@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Community Skill-Sharing — Home</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- favicon could be added later -->
+</head>
+<body>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <div class="logo" id="logo">SkillShare</div>
+    </div>
+
+    <div class="nav-center">
+      <div class="search-wrapper">
+        <input id="searchInput" type="search" placeholder="Search skills, communities..." aria-label="Search skills or communities" autocomplete="off">
+        <div id="suggestions" class="suggestions" role="listbox" aria-label="Search suggestions"></div>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <button id="loginBtn" class="btn-outline">Log in</button>
+      <button id="signupBtn" class="btn-primary">Sign up</button>
+    </div>
+  </header>
+
+  <!-- HERO / TITLE -->
+  <section class="hero">
+    <h1>Find & Share Skills in Your Community</h1>
+    <p class="subtitle">Browse top communities, ask questions, and help others — free and local.</p>
+  </section>
+
+  <!-- Breadcrumb & Back -->
+  <nav class="breadcrumb-bar" id="breadcrumbBar" aria-hidden="true">
+    <button id="backBtn" class="back-btn" aria-label="Back to main categories">← Back</button>
+    <div id="breadcrumb" class="breadcrumb">Home</div>
+  </nav>
+
+  <!-- Main container for cards (main or sub) -->
+  <main class="container">
+    <section id="cardsArea" class="grid-area" aria-live="polite"></section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div>© 2025 SkillShare — Open Platform</div>
+    <div><a href="#" class="link">About</a> • <a href="#" class="link">Contact</a></div>
+  </footer>
+
+  <!-- Login Modal (frontend demo) -->
+  <div id="loginModal" class="modal" aria-hidden="true" role="dialog" aria-label="Login modal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal" aria-label="Close">✕</button>
+      <h2 style="text-align: center; font-size: 2rem">Quick Login</h2>
+      <form id="loginForm">
+        <div>
+        <label for="nameInput">Name (display)</label>
+        <input id="nameInput" name="name" type="text" required placeholder="Your name">
+        </div><div><label for="emailInput">Email</label>
+        <input id="emailInput" name="email" type="email" required placeholder="you@example.com">
+        </div>
+        <div style="    margin-bottom: 38px;"><label for="pass">password</label>
+        <input id="pass" name="pass" type="password" required placeholder="PASSWORD">
+        </div><button type="submit" class="btn-primary">Login (demo)</button>
+      </form>
+      <p class="small"></p>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
+</body>
+</html>
