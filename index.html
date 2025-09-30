@@ -59,16 +59,39 @@
       <button class="modal-close" id="closeModal" aria-label="Close">✕</button>
       <h2 style="text-align: center; font-size: 2rem">Quick Login</h2>
       <form id="loginForm">
-        <div>
-        <label for="nameInput">Name (display)</label>
+        <div class="frommain"><div><label for="emailInput">Email:</label>
+        <input id="emailInput" name="email" type="email" required placeholder="You@example.com">
+        </div>
+        <div style=" margin-bottom: 38px;"><label for="pass">Password:</label>
+        <input id="pass" name="pass" type="password" required placeholder="PASSWORD">
+        </div></div><button type="submit" class="btn-primary">Login</button>
+      </form>
+       <p class="text-center text-sm text-gray-600">Don’t have an account? 
+      <a id="switchS" href="#" class="text-indigo-600 font-semibold hover:underline">Sign Up</a></p>
+      <p class="small"></p>
+    </div>
+  </div>
+
+  <!-- Sign Modal (frontend demo) -->
+  <div id="signModal" class="modal" aria-hidden="true" role="dialog" aria-label="signModal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal" aria-label="Close">✕</button>
+      <h2 style="text-align: center; font-size: 2rem">Quick Register</h2>
+      <form id="SignForm">
+        <div class="frommain"><div>
+        <label for="nameInput">Name:</label>
         <input id="nameInput" name="name" type="text" required placeholder="Your name">
-        </div><div><label for="emailInput">Email</label>
+        </div><div><label for="emailInput">Email:</label>
         <input id="emailInput" name="email" type="email" required placeholder="you@example.com">
         </div>
-        <div style="    margin-bottom: 38px;"><label for="pass">password</label>
+        <div style="margin-bottom: 38px;"><label for="pass">Password:</label>
         <input id="pass" name="pass" type="password" required placeholder="PASSWORD">
-        </div><button type="submit" class="btn-primary">Login (demo)</button>
+        </div></div><button type="submit" class="btn-primary">Sign-Up</button>
       </form>
+      <p class="text-center text-sm text-gray-600">
+        Already have an account? 
+       <a id="switchL" href="#" class="text-indigo-600 font-semibold hover:underline">Login</a>
+       </p>
       <p class="small"></p>
     </div>
   </div>

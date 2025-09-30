@@ -17,7 +17,7 @@ const COMMUNITIES = [
     emoji: "💻",
     popularity: 320,   // higher -> appears first
     subs: [
-      { slug: "programming", name: "Programming", skills: ["Java", "Python", "JavaScript", "C++"] },
+      { slug: "programming", name: "Programming", skills: ["Java", "Python", "JavaScript"] },
       { slug: "web", name: "Web Dev", skills: ["HTML", "CSS", "React", "Django"] },
       { slug: "db", name: "Databases", skills: ["MySQL", "MongoDB", "Postgres"] }
     ]
@@ -84,6 +84,7 @@ const loginModal = document.getElementById("loginModal");
 const closeModal = document.getElementById("closeModal");
 const loginForm = document.getElementById("loginForm");
 const signupBtn = document.getElementById("signupBtn");
+const signModal = document.getElementById("signModal");
 
 
 // ---------- Utility rendering helpers ----------
@@ -242,11 +243,11 @@ function openSkillPage(commId, subSlug) {
     qListDiv.style.gridColumn = "1 / -1";
     qListDiv.innerHTML = `
       <h3 style="margin-top:18px">Recent questions</h3>
-      <div class="card" style="background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9)); color:#0f1724;">
+      <div class="card" style="margin: 10px; background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9)); color:#0f1724;">
         <b>Scanner sc not working in Java</b>
         <div class="small" style="margin-top:8px">I get NoSuchElementException when reading input...</div>
       </div>
-      <div class="card" style="background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9)); color:#0f1724;">
+      <div class="card" style="margin: 10px; background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9)); color:#0f1724;">
         <b>How to bake sourdough at home?</b>
         <div class="small" style="margin-top:8px">My dough collapses after proofing...</div>
       </div>
@@ -255,7 +256,10 @@ function openSkillPage(commId, subSlug) {
 
     // add handlers demo
     const askBtn = document.getElementById("askBtn");
-    if (askBtn) askBtn.addEventListener("click", () => alert("Ask question flow will open (requires login)."));
+    const joinBtn=document.getElementById('joinBtn');
+    if (askBtn) askBtn.addEventListener("click", () => openModal(loginModal) );
+ 
+    joinBtn.addEventListener('click',()=> window.location.assign("chat.html"));
 
     // fade-in effects
     Array.from(cardsArea.children).forEach(ch => ch.classList.add("fade-in"));
@@ -356,27 +360,54 @@ searchInput.addEventListener("keydown", (e) => {
 
 
 // ---------- Login modal (frontend demo) ----------
-function openModal() {
-  loginModal.setAttribute("aria-hidden", "false");
+function openModal(n) {
+  n.setAttribute("aria-hidden", "false");
 }
-function closeModalFn() {
-  loginModal.setAttribute("aria-hidden", "true");
+function closeModalFn(n) {
+  n.setAttribute("aria-hidden", "true");
 }
-loginBtn.addEventListener("click", openModal);
-closeModal.addEventListener("click", closeModalFn);
+loginBtn.addEventListener("click", () =>openModal(loginModal));
+closeModal.addEventListener("click",() => closeModalFn(loginModal));
 loginForm.addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  const pass = document.getElementById("pass").value.trim();
+  const email = document.getElementById("emailInput").value.trim();
+  if (!pass || !email) return alert("Please enter Pass and email.");
+  // Demo: store to localStorage and update UI
+  localStorage.setItem("ss_user", JSON.stringify({ pass, email }));
+  // loginBtn.innerText = `Hi, ${name.split(" ")[0]}`;
+  closeModalFn(loginModal);
+});
+signupBtn.addEventListener("click",() => openModal(signModal));
+closeModal.addEventListener("click",() => closeModalFn(signModal));
+signModal.addEventListener("submit", (ev) => {
   ev.preventDefault();
   const name = document.getElementById("nameInput").value.trim();
   const email = document.getElementById("emailInput").value.trim();
-  if (!name || !email) return alert("Please enter name and email.");
+  const pass = document.getElementById("pass").value.trim();
+  if (!name || !email || !pass) return alert("Please enter name and email.");
   // Demo: store to localStorage and update UI
-  localStorage.setItem("ss_user", JSON.stringify({ name, email }));
+  localStorage.setItem("ss_user", JSON.stringify({ name, email,pass }));
   loginBtn.innerText = `Hi, ${name.split(" ")[0]}`;
-  closeModalFn();
+  closeModalFn(signModal);
 });
 
-// Signup button demo - redirect to same modal for now
-signupBtn.addEventListener("click", openModal);
+// Select the switch buttons
+const sw_s = document.getElementById('switchS');
+const sw_l = document.getElementById('switchL');
+
+// Switch to the signup modal
+sw_s.addEventListener('click', () => {
+  closeModalFn(loginModal);
+  openModal(signModal);
+});
+
+// Switch to the login modal
+sw_l.addEventListener('click', () => {
+  closeModalFn(signModal);
+  openModal(loginModal);
+});
+
 
 // If already logged in (demo), update button
 window.addEventListener("DOMContentLoaded", () => {

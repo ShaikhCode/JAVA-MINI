@@ -188,6 +188,18 @@ body {
   user-select: none;
   text-align: center;
 }
+.frommain {
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+  input{
+    margin-left: 12px;
+    border: 1px solid;
+    border-radius: 3px;
+    width: -webkit-fill-available;
+    padding: 9px 10px;
+  }
+}
 
 /* make exact same height visually - use aspect ratio on larger screens */
 @supports (aspect-ratio: 1/1) {
@@ -366,7 +378,7 @@ form {
   .search-wrapper {
     width: 90vw;
   }
-  .nav-right {
+  .nav-center {
     display: none;
   }
 }
