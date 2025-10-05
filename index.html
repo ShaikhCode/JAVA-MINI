@@ -27,6 +27,7 @@
     <div class="nav-right">
       <button id="loginBtn" class="btn-outline">Log in</button>
       <button id="signupBtn" class="btn-primary">Sign up</button>
+      <button id="logoutBtn" class="btn-primary" style="display: none;">Log Out</button>
     </div>
   </header>
 
@@ -56,7 +57,7 @@
   <!-- Login Modal (frontend demo) -->
   <div id="loginModal" class="modal" aria-hidden="true" role="dialog" aria-label="Login modal">
     <div class="modal-content">
-      <button class="modal-close" id="closeModal" aria-label="Close">✕</button>
+      <button class="modal-close" id="closeModal1" aria-label="Close">✕</button>
       <h2 style="text-align: center; font-size: 2rem">Quick Login</h2>
       <form id="loginForm">
         <div class="frommain"><div><label for="emailInput">Email:</label>
@@ -75,17 +76,17 @@
   <!-- Sign Modal (frontend demo) -->
   <div id="signModal" class="modal" aria-hidden="true" role="dialog" aria-label="signModal">
     <div class="modal-content">
-      <button class="modal-close" id="closeModal" aria-label="Close">✕</button>
+      <button class="modal-close" id="closeModal2" aria-label="Close">✕</button>
       <h2 style="text-align: center; font-size: 2rem">Quick Register</h2>
       <form id="SignForm">
         <div class="frommain"><div>
         <label for="nameInput">Name:</label>
-        <input id="nameInput" name="name" type="text" required placeholder="Your name">
+        <input id="nameInputs" name="name" type="text" required placeholder="Your name">
         </div><div><label for="emailInput">Email:</label>
-        <input id="emailInput" name="email" type="email" required placeholder="you@example.com">
+        <input id="emailInputs" name="email" type="email" required placeholder="you@example.com">
         </div>
         <div style="margin-bottom: 38px;"><label for="pass">Password:</label>
-        <input id="pass" name="pass" type="password" required placeholder="PASSWORD">
+        <input id="passs" name="pass" type="password" required placeholder="PASSWORD">
         </div></div><button type="submit" class="btn-primary">Sign-Up</button>
       </form>
       <p class="text-center text-sm text-gray-600">

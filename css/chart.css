@@ -1,11 +1,11 @@
 :root {
-  --bg-dark: #121212;
-  --bg-card: #1e1e1e;
-  --accent: #FF4B2B;
-  --accent2: #FF416C;
-  --text-primary: #fff;
-  --text-secondary: #ccc;
-  --border-color: #333;
+  --bg-dark: #121212; /* Dark background */
+  --bg-card: #1e1e1e; /* Slightly lighter card background */
+  --accent: #8B5CF6; /* Purple accent */
+  --accent2: #A78BFA; /* Light purple accent */
+  --text-primary: #ffffff; /* White text */
+  --text-secondary: #d1d5db; /* Light grey for secondary text */
+  --border-color: #333; /* Dark border for separation */
 }
 
 /* Reset */
@@ -54,7 +54,7 @@ body {
   padding: 15px;
   border-left: 5px solid var(--accent);
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(255, 75, 43, 0.2);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
   animation: slideIn 0.4s ease;
   transition: transform 0.2s;
 }

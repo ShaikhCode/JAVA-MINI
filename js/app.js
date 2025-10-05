@@ -3,19 +3,17 @@
    - On card click: shows subcards in same area (fade animations)
    - Back button / breadcrumb
    - Search with auto-suggestions (global or contextual)
-   - Quick login modal (frontend demo)
+   - Login / Signup integrated with Java backend
 */
 
 // ---------- Sample data: communities, subcategories, skills ----------
-// In production these will come from backend APIs.
-// Keep slugs lowercase and safe for URLs if needed.
 const COMMUNITIES = [
   {
     id: "tech",
     name: "Tech - Software",
     colorVar: "--tech",
     emoji: "💻",
-    popularity: 320,   // higher -> appears first
+    popularity: 320,
     subs: [
       { slug: "programming", name: "Programming", skills: ["Java", "Python", "JavaScript"] },
       { slug: "web", name: "Web Dev", skills: ["HTML", "CSS", "React", "Django"] },
@@ -81,23 +79,25 @@ const searchInput = document.getElementById("searchInput");
 const suggestionsBox = document.getElementById("suggestions");
 const loginBtn = document.getElementById("loginBtn");
 const loginModal = document.getElementById("loginModal");
-const closeModal = document.getElementById("closeModal");
+const closeModal1 = document.getElementById("closeModal1");
+const closeModal2 = document.getElementById("closeModal2");
 const loginForm = document.getElementById("loginForm");
 const signupBtn = document.getElementById("signupBtn");
 const signModal = document.getElementById("signModal");
+const closeSign = document.getElementById("closeSign");
+const sw_s = document.getElementById('switchS');
+const sw_l = document.getElementById('switchL');
+let u_name='';
+let u_id=0;
 
-
-// ---------- Utility rendering helpers ----------
+// ---------- Utility functions ----------
 function clearChildren(node) { while (node.firstChild) node.removeChild(node.firstChild); }
 
 function createCard({ title, subtitle, emoji, gradientVar, popularity, onclick, hoverText }) {
   const card = document.createElement("div");
   card.className = "card";
-  // inline gradient via CSS variable
-  if (gradientVar) card.style.background = `var(${gradientVar})`;
-  else card.style.background = "linear-gradient(135deg,#6b7280,#374151)";
+  card.style.background = gradientVar ? `var(${gradientVar})` : "linear-gradient(135deg,#6b7280,#374151)";
 
-  // popular badge
   if (popularity && popularity > 0) {
     const pop = document.createElement("div");
     pop.className = "popular";
@@ -120,7 +120,6 @@ function createCard({ title, subtitle, emoji, gradientVar, popularity, onclick, 
     card.appendChild(p);
   }
 
-  // hover detail center
   const hover = document.createElement("div");
   hover.className = "hover-detail";
   hover.innerHTML = `<div style="font-weight:700;">Click to explore</div><div style="margin-top:4px; font-size:0.95rem; opacity:0.95;">${hoverText || ""}</div>`;
@@ -128,24 +127,21 @@ function createCard({ title, subtitle, emoji, gradientVar, popularity, onclick, 
 
   if (typeof onclick === "function") {
     card.addEventListener("click", onclick);
-    card.tabIndex = 0; // keyboard focus
+    card.tabIndex = 0;
     card.addEventListener("keypress", (e) => { if (e.key === "Enter") onclick(e); });
   }
 
   return card;
 }
 
-
-// ---------- Render Main Cards (sorted by popularity) ----------
+// ---------- Render main cards ----------
 function renderMainCards() {
   currentView = "main";
   activeCommunity = null;
   breadcrumbBar.setAttribute("aria-hidden", "true");
   clearChildren(cardsArea);
 
-  // sort communities by popularity descending
   const list = [...COMMUNITIES].sort((a,b) => b.popularity - a.popularity);
-
   list.forEach(c => {
     const card = createCard({
       title: c.name,
@@ -161,33 +157,25 @@ function renderMainCards() {
   });
 }
 
-// ---------- Show Subcards for a Community ----------
+// ---------- Open subcards ----------
 function openSubcards(communityId) {
   const comm = COMMUNITIES.find(x => x.id === communityId);
   if (!comm) return;
   currentView = "sub";
   activeCommunity = comm.id;
 
-  // animate existing cards out, then replace
-  const children = Array.from(cardsArea.children);
-  children.forEach((ch, i) => {
-    ch.classList.add("fade-out");
-  });
-
-  // after animation (safe 300ms), replace content
+  Array.from(cardsArea.children).forEach(ch => ch.classList.add("fade-out"));
   setTimeout(() => {
     clearChildren(cardsArea);
     breadcrumbBar.setAttribute("aria-hidden", "false");
     breadcrumb.innerText = `Home / ${comm.name}`;
 
-    // create a "main subcard" for each subcategory
     comm.subs.forEach(sub => {
       const card = createCard({
         title: sub.name,
         subtitle: `${sub.skills.length} skills`,
         emoji: "🧭",
         gradientVar: comm.colorVar,
-        popularity: 0,
         hoverText: `Example skills: ${sub.skills.slice(0,4).join(", ")}`,
         onclick: () => openSkillPage(comm.id, sub.slug)
       });
@@ -195,7 +183,6 @@ function openSubcards(communityId) {
       card.classList.add("fade-in");
     });
 
-    // add a small "show all" card (optional)
     const showAll = createCard({
       title: `All ${comm.name} Skills`,
       subtitle: `Explore everything`,
@@ -209,22 +196,17 @@ function openSubcards(communityId) {
   }, 280);
 }
 
-
-// ---------- Open skill page (placeholder) ----------
+// ---------- Open skill page ----------
 function openSkillPage(commId, subSlug) {
-  // For MVP frontend, just show a placeholder view with sample actions
   const comm = COMMUNITIES.find(x => x.id === commId);
   const sub = comm?.subs.find(s => s.slug === subSlug);
-  // fade out
-  const children = Array.from(cardsArea.children);
-  children.forEach(ch => ch.classList.add("fade-out"));
 
+  Array.from(cardsArea.children).forEach(ch => ch.classList.add("fade-out"));
   setTimeout(() => {
     clearChildren(cardsArea);
     breadcrumb.innerText = `Home / ${comm.name} / ${sub ? sub.name : "All"}`;
     breadcrumbBar.setAttribute("aria-hidden", "false");
 
-    // large header card / CTA
     const headerCard = document.createElement("div");
     headerCard.className = "card";
     headerCard.style.background = `var(${comm.colorVar})`;
@@ -234,11 +216,9 @@ function openSkillPage(commId, subSlug) {
       <div style="margin-top:12px; display:flex; gap:8px; justify-content:center;">
         <button class="btn-primary" id="askBtn">Ask a question</button>
         <button class="btn-outline" id="joinBtn">Join community</button>
-      </div>
-    `;
+      </div>`;
     cardsArea.appendChild(headerCard);
 
-    // sample question list (static example)
     const qListDiv = document.createElement("div");
     qListDiv.style.gridColumn = "1 / -1";
     qListDiv.innerHTML = `
@@ -250,35 +230,44 @@ function openSkillPage(commId, subSlug) {
       <div class="card" style="margin: 10px; background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9)); color:#0f1724;">
         <b>How to bake sourdough at home?</b>
         <div class="small" style="margin-top:8px">My dough collapses after proofing...</div>
-      </div>
-    `;
+      </div>`;
     cardsArea.appendChild(qListDiv);
 
-    // add handlers demo
     const askBtn = document.getElementById("askBtn");
-    const joinBtn=document.getElementById('joinBtn');
-    if (askBtn) askBtn.addEventListener("click", () => openModal(loginModal) );
- 
-    joinBtn.addEventListener('click',()=> window.location.assign("chat.html"));
+    const joinBtn = document.getElementById("joinBtn");
+    if (askBtn) askBtn.addEventListener("click", () =>{
+      if(name!=null){
+        window.location.assign("chat.html");
+      }
+      openModal(loginModal);
+    } );
+    joinBtn.addEventListener("click", () => window.location.assign("chat.html"));
 
-    // fade-in effects
     Array.from(cardsArea.children).forEach(ch => ch.classList.add("fade-in"));
   }, 280);
 }
 
-// ---------- Back to main ----------
+// ---------- Back button ----------
 backBtn.addEventListener("click", () => {
   breadcrumbBar.setAttribute("aria-hidden", "true");
   breadcrumb.innerText = "Home";
-  // animate fade-out then render main
-  const children = Array.from(cardsArea.children);
-  children.forEach(ch => ch.classList.add("fade-out"));
+  Array.from(cardsArea.children).forEach(ch => ch.classList.add("fade-out"));
   setTimeout(() => renderMainCards(), 260);
 });
 
+// ---------- LogoutBTN button ----------
+const logoutBtn = document.getElementById("logoutBtn");
+logoutBtn.addEventListener("click", () => {
+  localStorage.removeItem("loggedInUser");
+  loginBtn.innerText = "Login";
+  signupBtn.style.display = 'block';
+  logoutBtn.style.display = 'none';
+  loginBtn.style.pointerEvents = 'auto';
 
-// ---------- Search & Suggestions ----------
-// Build a flat suggestions list from data
+});
+
+
+// ---------- Search ----------
 function buildSuggestionsList() {
   const suggestions = [];
   COMMUNITIES.forEach(c => {
@@ -304,14 +293,8 @@ function showSuggestions(list) {
     div.innerText = item.label;
     div.addEventListener("click", () => {
       suggestionsBox.style.display = "none";
-      // route according to type
       if (item.type === "community") openSubcards(item.id);
-      else if (item.type === "subcategory") openSubcards(item.id) , setTimeout(()=> {
-        // try to auto-open sub (if present)
-        const comm = COMMUNITIES.find(c => c.id === item.id);
-        const sub = comm?.subs.find(s => s.slug === item.subSlug);
-        if (sub) openSkillPage(item.id, item.subSlug);
-      }, 320);
+      else if (item.type === "subcategory") openSubcards(item.id), setTimeout(()=> openSkillPage(item.id, item.subSlug), 320);
       else if (item.type === "skill") openSubcards(item.id), setTimeout(()=> openSkillPage(item.id, item.subSlug), 320);
     });
     suggestionsBox.appendChild(div);
@@ -319,12 +302,10 @@ function showSuggestions(list) {
   suggestionsBox.style.display = "block";
 }
 
-// basic search logic: adapt to context (main OR sub)
 searchInput.addEventListener("input", function (e) {
   const q = (e.target.value || "").trim().toLowerCase();
   if (!q) { suggestionsBox.style.display = "none"; return; }
 
-  // If in sub view, search inside that community only (contextual)
   if (currentView === "sub" && activeCommunity) {
     const comm = COMMUNITIES.find(c => c.id === activeCommunity);
     const list = [];
@@ -338,19 +319,16 @@ searchInput.addEventListener("input", function (e) {
     return;
   }
 
-  // Global search across all suggestions
   const matches = SUGS.filter(s => s.label.toLowerCase().includes(q));
   showSuggestions(matches.slice(0, 8));
 });
 
-// close suggestions when clicking outside
 document.addEventListener("click", (e) => {
   if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
     suggestionsBox.style.display = "none";
   }
 });
 
-// handle Enter key in search to go to first match
 searchInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     const first = suggestionsBox.querySelector(".sug");
@@ -358,64 +336,130 @@ searchInput.addEventListener("keydown", (e) => {
   }
 });
 
+// ---------- Modals ----------
+function openModal(n) { n.setAttribute("aria-hidden", "false"); }
+function closeModalFn(n) { n.setAttribute("aria-hidden", "true"); }
 
-// ---------- Login modal (frontend demo) ----------
-function openModal(n) {
-  n.setAttribute("aria-hidden", "false");
-}
-function closeModalFn(n) {
-  n.setAttribute("aria-hidden", "true");
-}
-loginBtn.addEventListener("click", () =>openModal(loginModal));
-closeModal.addEventListener("click",() => closeModalFn(loginModal));
-loginForm.addEventListener("submit", (ev) => {
+// ---------- Login with backend ----------
+loginBtn.addEventListener("click", () => openModal(loginModal));
+closeModal1.addEventListener("click", () => closeModalFn(loginModal));
+
+loginForm.addEventListener("submit", async (ev) => {
   ev.preventDefault();
-  const pass = document.getElementById("pass").value.trim();
-  const email = document.getElementById("emailInput").value.trim();
-  if (!pass || !email) return alert("Please enter Pass and email.");
-  // Demo: store to localStorage and update UI
-  localStorage.setItem("ss_user", JSON.stringify({ pass, email }));
-  // loginBtn.innerText = `Hi, ${name.split(" ")[0]}`;
-  closeModalFn(loginModal);
-});
-signupBtn.addEventListener("click",() => openModal(signModal));
-closeModal.addEventListener("click",() => closeModalFn(signModal));
-signModal.addEventListener("submit", (ev) => {
-  ev.preventDefault();
-  const name = document.getElementById("nameInput").value.trim();
+
   const email = document.getElementById("emailInput").value.trim();
   const pass = document.getElementById("pass").value.trim();
-  if (!name || !email || !pass) return alert("Please enter name and email.");
-  // Demo: store to localStorage and update UI
-  localStorage.setItem("ss_user", JSON.stringify({ name, email,pass }));
-  loginBtn.innerText = `Hi, ${name.split(" ")[0]}`;
-  closeModalFn(signModal);
-});
 
-// Select the switch buttons
-const sw_s = document.getElementById('switchS');
-const sw_l = document.getElementById('switchL');
+  if (!email || !pass) return alert("Please enter email and password.");
 
-// Switch to the signup modal
-sw_s.addEventListener('click', () => {
-  closeModalFn(loginModal);
-  openModal(signModal);
-});
+  try {
+    // 1️⃣ Login API
+    const loginRes = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password: pass })
+    });
 
-// Switch to the login modal
-sw_l.addEventListener('click', () => {
-  closeModalFn(signModal);
-  openModal(loginModal);
-});
+    const loginData = await loginRes.json();
 
+    if (!loginRes.ok || !loginData.name) {
+      return alert(loginData.message || "Invalid login");
+    }
 
-// If already logged in (demo), update button
-window.addEventListener("DOMContentLoaded", () => {
-  const u = localStorage.getItem("ss_user");
-  if (u) {
-    const user = JSON.parse(u);
-    loginBtn.innerText = `Hi, ${user.name.split(" ")[0]}`;
+    // 2️⃣ Get name from DB using email
+    const nameRes = await fetch("/api/getName", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+
+    const nameData = await nameRes.json();
+    
+
+    if (nameData) {
+      u_id = nameData.id;
+      u_name = nameData.name;
+      console.log(u_id . u_name);
+      // ✅ Store in localStorage so login persists on reload
+      localStorage.setItem("loggedInUser", JSON.stringify({ id: u_id, name: u_name, email }));
+
+      // ✅ Update UI
+      loginBtn.innerText = `Hi, ${u_name.split(" ")[0]}`;
+      signupBtn.style.display = 'none';
+      logoutBtn.style.display = 'block';
+      loginBtn.style.pointerEvents = 'none'; // ❌ WRONG
+      loginBtn.style.pointerEvents = 'none'; // ✅ Correct usage
+
+      closeModalFn(loginModal);
+    } else {
+      alert(nameData.message || "Name not found");
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error. Check console.");
   }
-  // initially render main
+});
+
+
+
+// ---------- Signup with backend ----------
+signupBtn.addEventListener("click", () => openModal(signModal));
+closeModal2.addEventListener("click", () => closeModalFn(signModal));
+
+signModal.addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const name = document.getElementById("nameInputs").value.trim();
+  const email = document.getElementById("emailInputs").value.trim();
+  const pass = document.getElementById("passs").value.trim();
+  if (!name || !email || !pass) return alert("Fill all fields");
+  
+  try {
+    const res = await fetch("/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password: pass })
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      localStorage.setItem("loggedInUser", JSON.stringify(data));
+
+      loginBtn.innerText = `Hi, ${data.name.split(" ")[0]}`;
+      signupBtn.style.display='none';
+      logoutBtn.style.display='block';
+      loginBtn.pointerEvents= 'none';
+
+      closeModalFn(signModal);
+    } else alert(data.message || "Signup failed");
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
+  }
+});
+
+// ---------- Switch between modals ----------
+sw_s.addEventListener('click', () => { closeModalFn(loginModal); openModal(signModal); });
+sw_l.addEventListener('click', () => { closeModalFn(signModal); openModal(loginModal); });
+
+// ---------- Init ----------
+window.addEventListener("DOMContentLoaded", () => {
+  const loggedUser = localStorage.getItem("loggedInUser");
+  if (loggedUser) {
+    const user = JSON.parse(loggedUser);
+    loginBtn.innerText = `Hi, ${user.name.split(" ")[0]}`;
+    signupBtn.style.display = 'none';
+    logoutBtn.style.display = 'block';
+    loginBtn.style.pointerEvents = 'none';
+    u_id = user.id;
+    u_name = user.name;
+  } else {
+    signupBtn.style.display = 'block';
+    logoutBtn.style.display = 'none';
+    loginBtn.style.pointerEvents = 'unset';
+  }
+
+  // Render main cards
   renderMainCards();
 });
+
