@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JAVA - Q&A Chat Dashboard</title>
+  <link rel="stylesheet" href="css/chart.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <h1>💬 Community Q&A Board (PROGRAMING)</h1>
+  </header>
+
+  <!-- Layout -->
+  <main class="main-container">
+
+    <!-- Q&A Feed -->
+    <section class="chat-feed" id="chat-feed">
+      <!-- JS will inject questions and replies here -->
+    </section>
+
+    <!-- Ask Question Panel -->
+    <aside class="ask-panel">
+      <h2>Ask a Question</h2>
+      <input type="text" id="username" placeholder="Your name..." />
+      <textarea id="questionInput" placeholder="Type your question here..."></textarea>
+      <button onclick="postQuestion()">🚀 Post Question</button>
+    </aside>
+
+  </main>
+  <script src="https://kit.fontawesome.com/e062161507.js" crossorigin="anonymous"></script>
+  <script src="js/chat.js"></script>
+</body>
+</html>
